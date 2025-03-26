@@ -1,25 +1,68 @@
 /**
  * Agent Builder Zustand Store
- * 
+ *
  * Central state management for the Agent Builder application:
  * - Maintains collections of agents, MCP servers, and chat sessions
  * - Handles CRUD operations for all entities
  * - Manages UI state including selections, filters, and sorting
  * - Provides actions for modifying state
  * - Implements filtering and sorting logic
- * 
+ *
  * @module AgentStore
  */
-
+import { nanoid } from 'nanoid'
 import { create } from 'zustand'
-import { AgentState, Agent, MCPServer, ChatSession, ChatMessage } from './types'
+import { Agent, AgentConfig, ChatMessage, ChatSession, LogEntry, MCPServer, Message } from './types'
+
+
+interface AgentState {
+  agents: Agent[]
+  mcpServers: MCPServer[]
+  chatSessions: ChatSession[]
+  messages: Message[]
+  logs: LogEntry[]
+  selectedAgentId: string | null
+  selectedSessionId: string | null
+  isCreatingAgent: boolean
+  isEditingAgent: boolean
+  sortBy: string
+  sortDirection: string
+  searchQuery: string
+  filteredAgents: Agent[]
+  loading: boolean
+  error: string | null
+  setAgents: (agents: Agent[]) => void
+  addAgent: (agent: Omit<Agent, 'id'>) => string
+  updateAgent: (id: string, agent: Partial<Agent>) => void
+  deleteAgent: (id: string) => void
+  selectAgent: (id: string | null) => void
+  updateAgentConfig: (id: string, config: Partial<AgentConfig>) => void
+  addMcpServer: (server: Omit<MCPServer, 'id'>) => string
+  updateMcpServer: (id: string, server: Partial<MCPServer>) => void
+  deleteMcpServer: (id: string) => void
+  addMcpServerToAgent: (agentId: string, mcpServerId: string) => void
+  removeMcpServerFromAgent: (agentId: string, mcpServerId: string) => void
+  setChatSessions: (sessions: ChatSession[]) => void
+  addChatSession: (session: ChatSession) => void
+  updateChatSession: (id: string, updates: Partial<ChatSession>) => void
+  deleteChatSession: (id: string) => void
+  selectChatSession: (id: string) => void
+  addMessageToSession: (sessionId: string, message: ChatMessage) => void
+  addMessage: (message: Omit<Message, 'id'>) => void
+  clearMessages: () => void
+  addLog: (log: Omit<LogEntry, 'id'>) => void
+  clearLogs: () => void
+  initSampleData: () => void
+}
 
 export const useAgentStore = create<AgentState>((set, get) => ({
   // Collections
   agents: [],
   mcpServers: [],
   chatSessions: [],
-  
+  messages: [],
+  logs: [],
+
   // UI state
   selectedAgentId: null,
   selectedSessionId: null,
@@ -29,162 +72,231 @@ export const useAgentStore = create<AgentState>((set, get) => ({
   sortDirection: 'asc',
   searchQuery: '',
   filteredAgents: [],
-  
+
   // Status
   loading: true,
   error: null,
-  
+
   // Agent actions
   setAgents: (agents) => {
     set({ agents, filteredAgents: agents, loading: false })
-    get().applyFilters()
   },
-  
+
   addAgent: (agent) => {
-    set((state) => ({ 
-      agents: [...state.agents, agent],
-      loading: false 
-    }))
-    get().applyFilters()
-  },
-  
-  updateAgent: (id, updates) => {
+    const id = nanoid()
     set((state) => ({
-      agents: state.agents.map(agent => 
-        agent.id === id ? { ...agent, ...updates } : agent
-      )
+      agents: [...state.agents, { id, ...agent }],
+      selectedAgentId: id,
     }))
-    get().applyFilters()
+    return id
   },
-  
+
+  updateAgent: (id, agent) => {
+    set((state) => ({
+      agents: state.agents.map((a) => (a.id === id ? { ...a, ...agent } : a)),
+    }))
+  },
+
   deleteAgent: (id) => {
     set((state) => ({
-      agents: state.agents.filter(agent => agent.id !== id)
+      agents: state.agents.filter((agent) => agent.id !== id),
     }))
-    get().applyFilters()
   },
-  
+
   selectAgent: (id) => {
     set({ selectedAgentId: id })
   },
-  
-  // MCP Server actions
-  setMCPServers: (servers) => {
-    set({ mcpServers: servers })
-  },
-  
-  addMCPServer: (server) => {
-    set((state) => ({ 
-      mcpServers: [...state.mcpServers, server] 
-    }))
-  },
-  
-  updateMCPServer: (id, updates) => {
+
+  addMcpServer: (server) => {
+    const id = nanoid()
     set((state) => ({
-      mcpServers: state.mcpServers.map(server => 
-        server.id === id ? { ...server, ...updates } : server
-      )
+      mcpServers: [...state.mcpServers, { id, ...server }],
     }))
+    return id
   },
-  
-  deleteMCPServer: (id) => {
+
+  updateMcpServer: (id, server) => {
     set((state) => ({
-      mcpServers: state.mcpServers.filter(server => server.id !== id)
+      mcpServers: state.mcpServers.map((s) => (s.id === id ? { ...s, ...server } : s)),
     }))
   },
-  
+
+  deleteMcpServer: (id) => {
+    set((state) => ({
+      mcpServers: state.mcpServers.filter((s) => s.id !== id),
+      agents: state.agents.map((agent) => {
+        if (agent.config.mcpServerIds?.includes(id)) {
+          const mcpServerIds = (agent.config.mcpServerIds || []).filter(
+            (serverId) => serverId !== id
+          )
+
+          return {
+            ...agent,
+            config: {
+              ...agent.config,
+              mcpServerIds: mcpServerIds.length > 0 ? mcpServerIds : undefined,
+            },
+          }
+        }
+        return agent
+      }),
+    }))
+  },
+
+  addMcpServerToAgent: (agentId, mcpServerId) => {
+    set((state) => {
+      const agent = state.agents.find((a) => a.id === agentId)
+      const server = state.mcpServers.find((s) => s.id === mcpServerId)
+
+      if (!agent || !server) return state
+
+      const currentIds = agent.config.mcpServerIds || []
+      if (currentIds.includes(mcpServerId)) return state
+
+      const mcpServerIds = [...currentIds, mcpServerId]
+
+      return {
+        agents: state.agents.map((a) =>
+          a.id === agentId
+            ? {
+                ...a,
+                config: {
+                  ...a.config,
+                  mcpServerIds,
+                },
+              }
+            : a
+        ),
+      }
+    })
+  },
+
+  removeMcpServerFromAgent: (agentId, mcpServerId) => {
+    set((state) => {
+      const agent = state.agents.find((a) => a.id === agentId)
+      if (!agent) return state
+
+      const mcpServerIds = (agent.config.mcpServerIds || []).filter((id) => id !== mcpServerId)
+
+      return {
+        agents: state.agents.map((a) =>
+          a.id === agentId
+            ? {
+                ...a,
+                config: {
+                  ...a.config,
+                  mcpServerIds: mcpServerIds.length > 0 ? mcpServerIds : undefined,
+                },
+              }
+            : a
+        ),
+      }
+    })
+  },
+
   // Chat session actions
   setChatSessions: (sessions) => {
     set({ chatSessions: sessions })
   },
-  
+
   addChatSession: (session) => {
-    set((state) => ({ 
-      chatSessions: [...state.chatSessions, session] 
+    set((state) => ({
+      chatSessions: [...state.chatSessions, session],
     }))
   },
-  
+
   updateChatSession: (id, updates) => {
     set((state) => ({
-      chatSessions: state.chatSessions.map(session => 
+      chatSessions: state.chatSessions.map((session) =>
         session.id === id ? { ...session, ...updates } : session
-      )
+      ),
     }))
   },
-  
+
   deleteChatSession: (id) => {
     set((state) => ({
-      chatSessions: state.chatSessions.filter(session => session.id !== id)
+      chatSessions: state.chatSessions.filter((session) => session.id !== id),
     }))
   },
-  
+
   selectChatSession: (id) => {
     set({ selectedSessionId: id })
   },
-  
+
   addMessageToSession: (sessionId, message) => {
     set((state) => ({
-      chatSessions: state.chatSessions.map(session => 
-        session.id === sessionId 
-          ? { ...session, messages: [...session.messages, message] } 
+      chatSessions: state.chatSessions.map((session) =>
+        session.id === sessionId
+          ? { ...session, messages: [...session.messages, message] }
           : session
-      )
+      ),
     }))
   },
-  
-  // UI state actions
-  setSearchQuery: (query) => {
-    set({ searchQuery: query })
-    get().applyFilters()
+
+  updateAgentConfig: (id, config) => {
+    set((state) => ({
+      agents: state.agents.map((a) =>
+        a.id === id ? { ...a, config: { ...a.config, ...config } } : a
+      ),
+    }))
   },
-  
-  setSortBy: (sortBy) => {
-    set({ sortBy })
-    get().applyFilters()
+
+  // Message methods
+  addMessage: (message) => {
+    set((state) => ({
+      messages: [...state.messages, { id: nanoid(), ...message }],
+    }))
   },
-  
-  setSortDirection: (direction) => {
-    set({ sortDirection: direction })
-    get().applyFilters()
+
+  clearMessages: () => {
+    set(() => ({ messages: [] }))
   },
-  
-  // Status actions
-  setLoading: (loading) => set({ loading }),
-  setError: (error) => set({ error }),
-  
-  // Filters and sorting
-  applyFilters: () => {
-    const { agents, searchQuery, sortBy, sortDirection } = get()
-    
-    // Filter by search query
-    let filtered = [...agents]
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase().trim()
-      filtered = filtered.filter(agent => 
-        agent.name.toLowerCase().includes(query) || 
-        agent.description.toLowerCase().includes(query)
-      )
-    }
-    
-    // Sort agents
-    filtered.sort((a, b) => {
-      let comparison = 0
-      
-      switch (sortBy) {
-        case 'name':
-          comparison = a.name.localeCompare(b.name)
-          break
-        case 'createdAt':
-          comparison = new Date(a.config.createdAt).getTime() - new Date(b.config.createdAt).getTime()
-          break
-        case 'updatedAt':
-          comparison = new Date(a.config.updatedAt).getTime() - new Date(b.config.updatedAt).getTime()
-          break
-      }
-      
-      return sortDirection === 'asc' ? comparison : -comparison
-    })
-    
-    set({ filteredAgents: filtered })
-  }
+
+  // Log methods
+  addLog: (log) => {
+    set((state) => ({
+      logs: [...state.logs, { id: nanoid(), ...log }],
+    }))
+  },
+
+  clearLogs: () => {
+    set(() => ({ logs: [] }))
+  },
+
+  // Initialize sample data
+  initSampleData: () => {
+    const sampleServers: MCPServer[] = [
+      {
+        id: nanoid(),
+        name: 'Production MCP',
+        url: 'https://mcp.example.com/api',
+        status: 'online',
+      },
+    ]
+
+    const sampleAgents: Agent[] = [
+      {
+        id: nanoid(),
+        config: {
+          name: 'Customer Support Agent',
+          description: 'Handles customer inquiries and support tickets',
+          model: 'Claude 3 Opus',
+          systemPrompt:
+            'You are a helpful customer support assistant for Headstarter. Help users with their questions about our products and services. Be polite, professional, and knowledgeable.',
+          mcpServerIds: [sampleServers[0].id],
+          metadata: {
+            category: 'support',
+            language: 'en',
+            version: '1.0.0',
+          },
+        },
+      },
+    ]
+
+    return set(() => ({
+      mcpServers: sampleServers,
+      agents: sampleAgents,
+      selectedAgentId: sampleAgents[0].id,
+    }))
+  },
 }))
