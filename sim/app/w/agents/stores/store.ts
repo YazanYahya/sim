@@ -14,7 +14,6 @@ import { nanoid } from 'nanoid'
 import { create } from 'zustand'
 import { Agent, AgentConfig, ChatMessage, ChatSession, LogEntry, MCPServer, Message } from './types'
 
-
 interface AgentState {
   agents: Agent[]
   mcpServers: MCPServer[]
@@ -52,7 +51,6 @@ interface AgentState {
   clearMessages: () => void
   addLog: (log: Omit<LogEntry, 'id'>) => void
   clearLogs: () => void
-  initSampleData: () => void
 }
 
 export const useAgentStore = create<AgentState>((set, get) => ({
@@ -243,60 +241,25 @@ export const useAgentStore = create<AgentState>((set, get) => ({
 
   // Message methods
   addMessage: (message) => {
+    const id = nanoid()
     set((state) => ({
-      messages: [...state.messages, { id: nanoid(), ...message }],
+      messages: [...state.messages, { id, ...message }],
     }))
   },
 
   clearMessages: () => {
-    set(() => ({ messages: [] }))
+    set({ messages: [] })
   },
 
   // Log methods
   addLog: (log) => {
+    const id = nanoid()
     set((state) => ({
-      logs: [...state.logs, { id: nanoid(), ...log }],
+      logs: [...state.logs, { id, ...log }],
     }))
   },
 
   clearLogs: () => {
-    set(() => ({ logs: [] }))
-  },
-
-  // Initialize sample data
-  initSampleData: () => {
-    const sampleServers: MCPServer[] = [
-      {
-        id: nanoid(),
-        name: 'Production MCP',
-        url: 'https://mcp.example.com/api',
-        status: 'online',
-      },
-    ]
-
-    const sampleAgents: Agent[] = [
-      {
-        id: nanoid(),
-        config: {
-          name: 'Customer Support Agent',
-          description: 'Handles customer inquiries and support tickets',
-          model: 'Claude 3 Opus',
-          systemPrompt:
-            'You are a helpful customer support assistant for Headstarter. Help users with their questions about our products and services. Be polite, professional, and knowledgeable.',
-          mcpServerIds: [sampleServers[0].id],
-          metadata: {
-            category: 'support',
-            language: 'en',
-            version: '1.0.0',
-          },
-        },
-      },
-    ]
-
-    return set(() => ({
-      mcpServers: sampleServers,
-      agents: sampleAgents,
-      selectedAgentId: sampleAgents[0].id,
-    }))
+    set({ logs: [] })
   },
 }))

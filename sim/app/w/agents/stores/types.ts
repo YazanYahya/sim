@@ -19,12 +19,14 @@ export interface MCPServer {
   command?: string
   arguments?: string
   status?: 'online' | 'offline' | 'error'
+  envVariables?: Record<string, string>
 }
 
 export interface AgentConfig {
   name: string
   description: string
   model: string
+  apiKey: string
   systemPrompt: string
   mcpServerIds?: string[]
   metadata?: Record<string, any>
@@ -62,7 +64,7 @@ export interface Message {
 }
 
 export interface LogEntry {
-  id: string
+  id?: string
   timestamp: string
   agentId: string
   mcpServerId: string

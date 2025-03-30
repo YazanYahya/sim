@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { PlusIcon, XIcon } from 'lucide-react'
 import { CodeIcon, DatabaseIcon } from '@/app/components/icons'
 import { Button } from '@/app/components/ui/button'
 import {
@@ -15,6 +16,11 @@ import { Label } from '@/app/components/ui/label'
 import { useAgentStore } from '../../stores/store'
 import { validateMcpServer } from '../../utils/mcp-server'
 
+interface EnvVariable {
+  name: string
+  value: string
+}
+
 interface AddMcpServerDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -27,23 +33,42 @@ export default function AddMcpServerDialog({ open, onOpenChange }: AddMcpServerD
 
   const [name, setName] = useState('')
   const [url, setUrl] = useState('')
-  const [apiKey, setApiKey] = useState('')
   const [connectionType, setConnectionType] = useState<ConnectionType>('standard_io')
   const [command, setCommand] = useState('')
   const [arguments_, setArguments] = useState('')
+  const [envVariables, setEnvVariables] = useState<EnvVariable[]>([{ name: '', value: '' }])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
+
+  const handleAddEnvVariable = () => {
+    setEnvVariables([...envVariables, { name: '', value: '' }])
+  }
+
+  const handleRemoveEnvVariable = (index: number) => {
+    setEnvVariables(envVariables.filter((_, i) => i !== index))
+  }
+
+  const handleEnvVariableChange = (index: number, field: 'name' | 'value', value: string) => {
+    const newEnvVariables = [...envVariables]
+    newEnvVariables[index][field] = value
+    setEnvVariables(newEnvVariables)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
+    // Convert env variables to a key-value object, filtering out empty pairs
+    const envVars = envVariables
+      .filter((env) => env.name && env.value)
+      .reduce((acc, { name, value }) => ({ ...acc, [name]: value }), {})
+
     const serverData = {
       name,
       url,
-      apiKey,
       connectionType,
       command: connectionType === 'standard_io' ? command : undefined,
       arguments: connectionType === 'standard_io' ? arguments_ : undefined,
+      envVariables: envVars,
     }
 
     // Validate the server data
@@ -59,10 +84,10 @@ export default function AddMcpServerDialog({ open, onOpenChange }: AddMcpServerD
     const newMcpServer = {
       name,
       url,
-      apiKey,
       connectionType,
       command: connectionType === 'standard_io' ? command : undefined,
       arguments: connectionType === 'standard_io' ? arguments_ : undefined,
+      envVariables: envVars,
       status: 'offline' as 'online' | 'offline' | 'error',
     }
 
@@ -83,10 +108,10 @@ export default function AddMcpServerDialog({ open, onOpenChange }: AddMcpServerD
   const resetForm = () => {
     setName('')
     setUrl('')
-    setApiKey('')
     setCommand('')
     setArguments('')
     setConnectionType('standard_io')
+    setEnvVariables([{ name: '', value: '' }])
     setErrors([])
   }
 
@@ -187,17 +212,48 @@ export default function AddMcpServerDialog({ open, onOpenChange }: AddMcpServerD
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="apiKey">API Key</Label>
-            <Input
-              id="apiKey"
-              type="password"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-              placeholder="Your API key"
-            />
-            <p className="text-xs text-muted-foreground">
-              API key for authenticating with the MCP server
-            </p>
+            <div className="flex items-center justify-between">
+              <Label>Environment Variables</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleAddEnvVariable}
+                className="h-8"
+              >
+                <PlusIcon className="w-4 h-4 mr-1" />
+                Add Variable
+              </Button>
+            </div>
+            <div className="space-y-2">
+              {envVariables.map((env, index) => (
+                <div key={index} className="flex gap-2 items-start">
+                  <Input
+                    placeholder="Name"
+                    value={env.name}
+                    onChange={(e) => handleEnvVariableChange(index, 'name', e.target.value)}
+                    className="flex-1"
+                  />
+                  <Input
+                    placeholder="Value"
+                    value={env.value}
+                    onChange={(e) => handleEnvVariableChange(index, 'value', e.target.value)}
+                    className="flex-1"
+                  />
+                  {envVariables.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleRemoveEnvVariable(index)}
+                      className="h-10 w-10"
+                    >
+                      <XIcon className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
 
           <DialogFooter>

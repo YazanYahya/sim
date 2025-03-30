@@ -34,6 +34,7 @@ export default function CreateAgentDialog({ open, onOpenChange }: CreateAgentDia
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [model, setModel] = useState('Claude 3 Sonnet')
+  const [apiKey, setApiKey] = useState('')
   const [systemPrompt, setSystemPrompt] = useState('You are a helpful assistant.')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errors, setErrors] = useState<string[]>([])
@@ -50,6 +51,7 @@ export default function CreateAgentDialog({ open, onOpenChange }: CreateAgentDia
       name,
       description,
       model,
+      apiKey,
       systemPrompt,
     }
 
@@ -68,6 +70,7 @@ export default function CreateAgentDialog({ open, onOpenChange }: CreateAgentDia
         name,
         description,
         model,
+        apiKey,
         systemPrompt,
       },
     }
@@ -90,6 +93,7 @@ export default function CreateAgentDialog({ open, onOpenChange }: CreateAgentDia
     setName('')
     setDescription('')
     setModel('Claude 3 Sonnet')
+    setApiKey('')
     setSystemPrompt('You are a helpful assistant.')
     setErrors([])
   }
@@ -152,6 +156,18 @@ export default function CreateAgentDialog({ open, onOpenChange }: CreateAgentDia
                 <SelectItem value="Mistral Small">Mistral Small</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="apiKey">API Key</Label>
+            <Input
+              id="apiKey"
+              type="password"
+              placeholder={`Enter your ${model} API key`}
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              required
+            />
           </div>
 
           <div className="space-y-2">

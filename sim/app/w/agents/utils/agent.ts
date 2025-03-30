@@ -34,6 +34,10 @@ export function validateAgentConfig(config: Partial<AgentConfig>): {
     errors.push('Model is required')
   }
 
+  if (!config.apiKey?.trim()) {
+    errors.push('API key is required')
+  }
+
   return {
     valid: errors.length === 0,
     errors,

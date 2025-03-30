@@ -18,16 +18,12 @@ import { useAgentStore } from '../../stores/store'
 import CreateAgentDialog from './create-agent-dialog'
 
 export default function Sidebar() {
-  const { agents, selectedAgentId, selectAgent, initSampleData, mcpServers } = useAgentStore()
+  const { agents, selectedAgentId, selectAgent, mcpServers } = useAgentStore()
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
   // Ensure we have sample data loaded
-  useEffect(() => {
-    if (agents.length === 0) {
-      initSampleData()
-    }
-  }, [agents.length, initSampleData])
+  useEffect(() => {}, [agents.length])
 
   // Handle selecting an agent
   const handleSelectAgent = (id: string) => {
@@ -87,12 +83,18 @@ export default function Sidebar() {
                     {agent.config.mcpServerIds && agent.config.mcpServerIds.length > 0 && (
                       <div className="flex flex-wrap gap-1">
                         {agent.config.mcpServerIds.map((serverId, index) => {
-                          const server = mcpServers.find(s => s.id === serverId);
-                          return server && (
-                            <Badge key={index} variant="outline" className="px-1 py-0 text-[10px] h-4 bg-muted">
-                              {server.name}
-                            </Badge>
-                          );
+                          const server = mcpServers.find((s) => s.id === serverId)
+                          return (
+                            server && (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="px-1 py-0 text-[10px] h-4 bg-muted"
+                              >
+                                {server.name}
+                              </Badge>
+                            )
+                          )
                         })}
                       </div>
                     )}
