@@ -168,7 +168,6 @@ describe('Workflow Execution API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })
@@ -195,12 +194,9 @@ describe('Workflow Execution API Route', () => {
     }
 
     // Verify middleware was called
-    const validateWorkflowAccess = (await import('@/app/api/workflows/middleware'))
-      .validateWorkflowAccess
     expect(validateWorkflowAccess).toHaveBeenCalledWith(expect.any(Object), 'workflow-id')
 
     // Verify executor was initialized
-    const Executor = (await import('@/executor')).Executor
     expect(Executor).toHaveBeenCalled()
 
     // Verify execute was called with undefined input (GET requests don't have body)
@@ -226,7 +222,6 @@ describe('Workflow Execution API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -257,7 +252,6 @@ describe('Workflow Execution API Route', () => {
     expect(validateWorkflowAccess).toHaveBeenCalledWith(expect.any(Object), 'workflow-id')
 
     // Verify executor was constructed
-    const Executor = (await import('@/executor')).Executor
     expect(Executor).toHaveBeenCalled()
 
     // Verify execute was called with the input body
@@ -297,7 +291,6 @@ describe('Workflow Execution API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -311,7 +304,6 @@ describe('Workflow Execution API Route', () => {
     expect(data).toHaveProperty('success', true)
 
     // Verify the executor was constructed with the structured input - updated to match implementation
-    const Executor = (await import('@/executor')).Executor
     expect(Executor).toHaveBeenCalledWith(
       expect.anything(), // serializedWorkflow
       expect.anything(), // processedBlockStates
@@ -335,7 +327,6 @@ describe('Workflow Execution API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -376,7 +367,6 @@ describe('Workflow Execution API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler - should throw an error when trying to parse the body
     const response = await POST(req, { params })
@@ -411,7 +401,6 @@ describe('Workflow Execution API Route', () => {
     const params = Promise.resolve({ id: 'invalid-workflow-id' })
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })

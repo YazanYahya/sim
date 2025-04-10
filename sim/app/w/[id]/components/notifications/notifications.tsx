@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { Info, Rocket, Store, Terminal, X } from 'lucide-react'
+import { Info, Rocket, Store, Terminal } from 'lucide-react'
 import { ErrorIcon } from '@/components/icons'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert } from '@/components/ui/alert'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,8 +12,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { CopyButton } from '@/components/ui/copy-button'
 import { createLogger } from '@/lib/logs/console-logger'
 import { cn } from '@/lib/utils'
 import { MAX_VISIBLE_NOTIFICATIONS, useNotificationStore } from '@/stores/notifications/store'

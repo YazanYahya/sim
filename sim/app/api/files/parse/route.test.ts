@@ -4,7 +4,6 @@
  * @vitest-environment node
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { NextRequest } from 'next/server'
 import path from 'path'
 import { createMockRequest } from '@/app/api/__test-utils__/utils'
 
@@ -117,7 +116,6 @@ describe('File Parse API Route', () => {
   // Basic tests testing the API structure
   it('should handle missing file path', async () => {
     const req = createMockRequest('POST', {})
-    const { POST } = await import('./route')
 
     const response = await POST(req)
     const data = await response.json()
@@ -134,7 +132,6 @@ describe('File Parse API Route', () => {
     })
 
     // When: The API processes the request
-    const { POST } = await import('./route')
     const response = await POST(req)
     const data = await response.json()
 
@@ -159,7 +156,6 @@ describe('File Parse API Route', () => {
     })
 
     // When: The API processes the request
-    const { POST } = await import('./route')
     const response = await POST(req)
     const data = await response.json()
 
@@ -181,7 +177,6 @@ describe('File Parse API Route', () => {
     })
 
     // When: The API processes the request
-    const { POST } = await import('./route')
     const response = await POST(req)
     const data = await response.json()
 
@@ -203,7 +198,6 @@ describe('File Parse API Route', () => {
     })
 
     // When: The API processes the request
-    const { POST } = await import('./route')
     const response = await POST(req)
     const data = await response.json()
 

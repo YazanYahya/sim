@@ -4,7 +4,6 @@
  * @vitest-environment node
  */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { NextRequest } from 'next/server'
 import { createMockRequest } from '@/app/api/__test-utils__/utils'
 
 describe('File Delete API Route', () => {
@@ -74,7 +73,6 @@ describe('File Delete API Route', () => {
     })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req)
@@ -99,7 +97,6 @@ describe('File Delete API Route', () => {
     })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req)
@@ -127,7 +124,6 @@ describe('File Delete API Route', () => {
     })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req)

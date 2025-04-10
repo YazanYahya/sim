@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useFilterStore } from '@/app/w/logs/stores/store'
-import { LogLevel } from '@/app/w/logs/stores/types'
 
 export default function Level() {
   const { level, setLevel } = useFilterStore()

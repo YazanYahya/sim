@@ -70,7 +70,6 @@ describe('File Serve API Route', () => {
     const params = { path: ['test-file.txt'] }
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })
@@ -98,7 +97,6 @@ describe('File Serve API Route', () => {
     const params = { path: ['nested', 'path', 'file.txt'] }
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })
@@ -121,7 +119,6 @@ describe('File Serve API Route', () => {
     const params = { path: ['s3', '1234567890-file.pdf'] }
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })
@@ -151,7 +148,6 @@ describe('File Serve API Route', () => {
     const params = { path: ['s3', '1234567890-image.png'] }
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })
@@ -173,7 +169,6 @@ describe('File Serve API Route', () => {
     const params = { path: ['nonexistent.txt'] }
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })

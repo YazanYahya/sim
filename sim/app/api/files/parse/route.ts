@@ -4,9 +4,8 @@ import { Buffer } from 'buffer'
 import { createHash } from 'crypto'
 import fsPromises, { readFile, unlink, writeFile } from 'fs/promises'
 import { tmpdir } from 'os'
-import { join } from 'path'
 import path from 'path'
-import { isSupportedFileType, parseFile } from '@/lib/file-parsers'
+import { parseFile } from '@/lib/file-parsers'
 import { createLogger } from '@/lib/logs/console-logger'
 import { downloadFromS3 } from '@/lib/uploads/s3-client'
 import { UPLOAD_DIR, USE_S3_STORAGE } from '@/lib/uploads/setup'
@@ -386,7 +385,6 @@ async function handleCsvBuffer(
     logger.info(`Parsing CSV in memory: ${filename}`)
 
     // Use the parseBuffer function from our library
-    const { parseBuffer } = await import('../../../../lib/file-parsers')
     const result = await parseBuffer(fileBuffer, 'csv')
 
     return {

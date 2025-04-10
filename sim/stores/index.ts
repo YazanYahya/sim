@@ -18,7 +18,6 @@ import {
 import { useWorkflowRegistry } from './workflows/registry/store'
 import { useSubBlockStore } from './workflows/subblock/store'
 import { useWorkflowStore } from './workflows/workflow/store'
-import { workflowSync } from './workflows/sync'
 import { BlockState } from './workflows/workflow/types'
 import { SubBlockType } from '@/blocks/types'
 

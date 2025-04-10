@@ -1,4 +1,3 @@
-import { Chat } from './components/chat/chat'
 import { ErrorBoundary } from './components/error'
 
 export default function WorkflowLayout({ children }: { children: React.ReactNode }) {

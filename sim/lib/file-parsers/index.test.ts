@@ -144,7 +144,6 @@ describe('File Parsers', () => {
       mockExistsSync.mockReturnValueOnce(false)
 
       // Dynamically import the module after mocks are set up
-      const { parseFile } = await import('./index')
 
       const testFilePath = '/test/files/test.pdf'
       await expect(parseFile(testFilePath)).rejects.toThrow('File not found')
@@ -152,7 +151,6 @@ describe('File Parsers', () => {
     })
 
     it('should throw error if file path is empty', async () => {
-      const { parseFile } = await import('./index')
       await expect(parseFile('')).rejects.toThrow('No file path provided')
     })
 
@@ -168,8 +166,6 @@ describe('File Parsers', () => {
 
       mockPdfParseFile.mockResolvedValueOnce(expectedResult)
       mockExistsSync.mockReturnValue(true)
-
-      const { parseFile } = await import('./index')
       const result = await parseFile('/test/files/document.pdf')
 
       expect(result).toEqual(expectedResult)
@@ -186,8 +182,6 @@ describe('File Parsers', () => {
 
       mockCsvParseFile.mockResolvedValueOnce(expectedResult)
       mockExistsSync.mockReturnValue(true)
-
-      const { parseFile } = await import('./index')
       const result = await parseFile('/test/files/data.csv')
 
       expect(result).toEqual(expectedResult)
@@ -204,8 +198,6 @@ describe('File Parsers', () => {
 
       mockDocxParseFile.mockResolvedValueOnce(expectedResult)
       mockExistsSync.mockReturnValue(true)
-
-      const { parseFile } = await import('./index')
       const result = await parseFile('/test/files/document.docx')
 
       expect(result).toEqual(expectedResult)
@@ -214,8 +206,6 @@ describe('File Parsers', () => {
     it('should throw error for unsupported file types', async () => {
       // Make sure the file "exists" for this test
       mockExistsSync.mockReturnValue(true)
-
-      const { parseFile } = await import('./index')
       const unsupportedFilePath = '/test/files/image.png'
 
       await expect(parseFile(unsupportedFilePath)).rejects.toThrow('Unsupported file type')
@@ -235,24 +225,18 @@ describe('File Parsers', () => {
 
   describe('isSupportedFileType', () => {
     it('should return true for supported file types', async () => {
-      const { isSupportedFileType } = await import('./index')
-
       expect(isSupportedFileType('pdf')).toBe(true)
       expect(isSupportedFileType('csv')).toBe(true)
       expect(isSupportedFileType('docx')).toBe(true)
     })
 
     it('should return false for unsupported file types', async () => {
-      const { isSupportedFileType } = await import('./index')
-
       expect(isSupportedFileType('png')).toBe(false)
       expect(isSupportedFileType('txt')).toBe(false)
       expect(isSupportedFileType('unknown')).toBe(false)
     })
 
     it('should handle uppercase extensions', async () => {
-      const { isSupportedFileType } = await import('./index')
-
       expect(isSupportedFileType('PDF')).toBe(true)
       expect(isSupportedFileType('CSV')).toBe(true)
     })

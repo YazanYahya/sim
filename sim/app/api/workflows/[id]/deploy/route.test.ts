@@ -163,7 +163,6 @@ describe('Workflow Deployment API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import required modules after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -236,7 +235,6 @@ describe('Workflow Deployment API Route', () => {
     const params = Promise.resolve({ id: 'workflow-id' })
 
     // Import required modules after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -321,7 +319,6 @@ describe('Workflow Deployment API Route', () => {
     const params = Promise.resolve({ id: 'invalid-id' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
