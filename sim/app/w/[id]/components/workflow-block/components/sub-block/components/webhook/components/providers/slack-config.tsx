@@ -1,5 +1,3 @@
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { CopyableField } from '../ui/copyable'
 import { TestResultDisplay } from '../ui/test-result'
 

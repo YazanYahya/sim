@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import { Eye, Star } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 import { Workflow } from '../marketplace'
-import { WorkflowPreview } from './workflow-preview'
 
 /**
  * WorkflowCardProps interface - defines the properties for the WorkflowCard component

@@ -1,4 +1,3 @@
-import { Chat } from './components/chat/chat'
 import { ControlBar } from './components/control-bar/control-bar'
 import { ErrorBoundary } from './components/error'
 import { Panel } from './components/panel/panel'

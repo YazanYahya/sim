@@ -9,7 +9,6 @@
  */
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { SerializedWorkflow } from '../serializer/types'
-import { Executor } from './index'
 
 vi.mock('@/lib/logs/console-logger', () => ({
   createLogger: () => ({
@@ -870,7 +869,6 @@ describe('Executor', () => {
       const workflow = createWorkflowWithLoop()
 
       // Import with mocks applied
-      const { LoopManager } = await import('./loops')
       const loopManager = new LoopManager(workflow.loops)
 
       // Create a mock context
@@ -928,7 +926,6 @@ describe('Executor', () => {
       const workflow = createWorkflowWithLoop()
 
       // Import with mocks applied
-      const { Executor } = await import('./index')
       const executor = new Executor(workflow)
 
       const { InputResolver } = await import('./resolver')

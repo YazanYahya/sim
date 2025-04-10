@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Check, ChevronDown, RefreshCw, Search, X } from 'lucide-react'
+import { Check, ChevronDown, RefreshCw } from 'lucide-react'
 import { GmailIcon } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 import {
@@ -18,7 +18,6 @@ import {
   Credential,
   getProviderIdFromServiceId,
   getServiceIdFromScopes,
-  parseProvider,
 } from '@/lib/oauth'
 import { saveToStorage } from '@/stores/workflows/persistence'
 import { OAuthRequiredModal } from '@/app/w/[id]/components/workflow-block/components/sub-block/components/credential-selector/components/oauth-required-modal'

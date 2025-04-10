@@ -148,7 +148,6 @@ describe('Webhook Trigger API Route', () => {
     const params = Promise.resolve({ path: 'test-path' })
 
     // Import the handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req, { params })
@@ -263,7 +262,6 @@ describe('Webhook Trigger API Route', () => {
     }))
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -300,7 +298,6 @@ describe('Webhook Trigger API Route', () => {
     const params = Promise.resolve({ path: 'non-existent-path' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -345,7 +342,6 @@ describe('Webhook Trigger API Route', () => {
     const params = Promise.resolve({ path: 'test-path' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })
@@ -436,7 +432,6 @@ describe('Webhook Trigger API Route', () => {
     const params = Promise.resolve({ path: 'slack-path' })
 
     // Import the handler after mocks are set up
-    const { POST } = await import('./route')
 
     // Call the handler
     const response = await POST(req, { params })

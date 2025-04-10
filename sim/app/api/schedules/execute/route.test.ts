@@ -6,7 +6,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   createMockRequest,
-  getMockedDependencies,
   mockExecutionDependencies,
   sampleWorkflowState,
 } from '@/app/api/__test-utils__/utils'
@@ -121,7 +120,6 @@ describe('Scheduled Workflow Execution API Route', () => {
     const req = createMockRequest('GET')
 
     // Import the route handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req)
@@ -159,7 +157,6 @@ describe('Scheduled Workflow Execution API Route', () => {
     const req = createMockRequest('GET')
 
     // Import the route handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req)
@@ -201,7 +198,6 @@ describe('Scheduled Workflow Execution API Route', () => {
     const req = createMockRequest('GET')
 
     // Import the route handler after mocks are set up
-    const { GET } = await import('./route')
 
     // Call the handler
     const response = await GET(req)
