@@ -1,14 +1,15 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Bot, Info, Loader2, Send } from 'lucide-react'
 import { nanoid } from 'nanoid'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import { Button } from '@/app/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/app/components/ui/card'
 import { Input } from '@/app/components/ui/input'
 import { useAgentStore } from '../../stores/store'
 import { Agent, ChatMessage, LogEntry } from '../../stores/types'
-import { MarkdownContent } from './markdown-content'
 
 export default function Chat() {
   const { agents, selectedAgentId, mcpServers, addLog } = useAgentStore()
@@ -144,7 +145,6 @@ export default function Chat() {
         type: 'response',
       }
       addLog(assistantLog)
-
     } catch (error) {
       console.error('Error processing message with provider:', error)
 
@@ -211,7 +211,11 @@ export default function Chat() {
                 {msg.role === 'user' ? (
                   <div>{msg.content}</div>
                 ) : (
-                  <MarkdownContent content={msg.content} />
+                  <div className="prose !text-sm">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content}
+                      </ReactMarkdown>
+                  </div>
                 )}
               </div>
             </div>
